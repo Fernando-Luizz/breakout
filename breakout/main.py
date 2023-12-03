@@ -1,11 +1,12 @@
 import sys
 import pygame
-from Wall import Wall
+from Brick import Brick
 from Racket import Racket
 from Ball import Ball
+from Edge import Edge
 import pygame.font
 
-columns = 12
+columns = 14
 rows = 8
 pygame.font.init()
 pygame.init()
@@ -21,13 +22,14 @@ pygame.display.set_caption("Breakout")
 lives = 3
 score = 0
 
-brick_wall = Wall(screen, screen_width, columns, rows) #Instância classe Wall
+brick_wall = Brick(screen, screen_width-19, columns, rows) #Instância classe Brick
 racket = Racket(screen_width, screen_height, columns) #Instância da classe Racket
 initial_ball_position = ( #Posição inicial da bola
     racket.rect.x + ((racket.width // 2) - 7.5),
     racket.rect.y - ((racket.height * 2) - 21),
      )
 ball = Ball(*initial_ball_position)
+edge = Edge()
 
 # Load fonts outside the loop
 font_size = 36
@@ -37,9 +39,12 @@ score_font = pygame.font.Font("assets/font/letter.ttf", 50)
 new_wall_needed = False
 ball_on_racket = True
 
+
 flag = True
 while flag and lives > 0:
     screen.fill(black_background)
+
+    edge.edge()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

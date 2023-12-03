@@ -21,5 +21,5 @@ class Racket:
             self.rect.x += self.speed
 
     def draw(self, screen):
-        color_racket = (0, 97, 148)
-        pygame.draw.rect(screen, color_racket, self.rect)
+        racket_color = (0, 97, 148)
+        pygame.draw.rect(screen, racket_color, self.rect)
