@@ -21,9 +21,9 @@ pygame.display.set_caption("Breakout")
 lives = 3
 score = 0
 
-brick_wall = Wall(screen, screen_width, columns, rows) #Instancia classe Wall
-racket = Racket(screen_width, screen_height, columns) #instancia da classe Racket
-initial_ball_position = ( #posicao inicial da bola
+brick_wall = Wall(screen, screen_width, columns, rows) #Instância classe Wall
+racket = Racket(screen_width, screen_height, columns) #Instância da classe Racket
+initial_ball_position = ( #Posição inicial da bola
     racket.rect.x + ((racket.width // 2) - 7.5),
     racket.rect.y - ((racket.height * 2) - 21),
      )
@@ -95,7 +95,7 @@ font = pygame.font.Font(None, 72)
 text = font.render(message, True, red_message if lives == 0 else green_message)
 screen.blit(text, (screen_width // 2 - 150, screen_height // 2 - 36))
 
-#mosra a pontuacao final
+#Mostra a pontuacao final
 score_text = game_font.render(f"Score: {ball.score}", True, white_score)
 screen.blit(score_text, (screen_width // 2 - 150, screen_height // 2 + 36))
 

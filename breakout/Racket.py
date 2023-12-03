@@ -3,7 +3,7 @@ from pygame.locals import Rect
 class Racket:
     def __init__(self, screen_width, screen_height, column):
         self.height = 20
-        self.width = int(screen_width / column * 3)
+        self.width = int(screen_width / column)
         self.x = int((screen_width / 2) - (self.width / 2) + 10)
         self.y = screen_height - (self.height * 2)
         self.speed = 2
@@ -21,5 +21,5 @@ class Racket:
             self.rect.x += self.speed
 
     def draw(self, screen):
-        color_racket = (135, 206, 250)
+        color_racket = (0, 97, 148)
         pygame.draw.rect(screen, color_racket, self.rect)

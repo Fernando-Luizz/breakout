@@ -1,10 +1,10 @@
 import pygame
 
 edge_color = (0, 0, 0)
-red_brick = (255, 0, 0)
-orange_brick = (255 * 65536 + 165 * 256 + 0)
-green_brick = (0, 100, 0)
-yelow_brick = (255, 255, 0)
+red_brick = (162, 8, 0)
+orange_brick = (183, 119, 0)
+green_brick = (0, 127, 33)
+yellow_brick = (197, 199, 37)
 
 class Wall:
     def __init__(self, screen, screen_width, column, rows):
@@ -43,7 +43,7 @@ class Wall:
                 elif brick[1] == 3:
                     brick_color = green_brick
                 else:
-                    brick_color = yelow_brick
+                    brick_color = yellow_brick
 
                 pygame.draw.rect(screen, brick_color, brick[0])
                 pygame.draw.rect(screen, edge_color, brick[0], 2) #borda
