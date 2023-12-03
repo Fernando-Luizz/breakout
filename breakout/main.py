@@ -33,8 +33,8 @@ edge = Edge()
 
 # Load fonts outside the loop
 font_size = 36
-game_font = pygame.font.Font("assets/font/letter.ttf", font_size)
-score_font = pygame.font.Font("assets/font/letter.ttf", 50)
+game_font = pygame.font.Font("assets/font/game_font.ttf", font_size)
+score_font = pygame.font.Font("assets/font/score_font.ttf", 36)
 
 new_wall_needed = False
 ball_on_racket = True
@@ -91,12 +91,13 @@ while flag and lives > 0:
     pygame.display.update()
 
 if lives == 0:
-    message = "Game Over"
+    message = "GAME OVER"
+    
 elif not flag:
-    message = "You Won!"
+    message = "YOU WON!"
 
 screen.fill(black_background)
-font = pygame.font.Font(None, 72)
+font = pygame.font.Font("assets/font/game_font.ttf", 72)
 text = font.render(message, True, red_message if lives == 0 else green_message)
 screen.blit(text, (screen_width // 2 - 150, screen_height // 2 - 36))
 
