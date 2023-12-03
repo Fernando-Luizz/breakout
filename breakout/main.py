@@ -3,35 +3,104 @@ import pygame
 from Wall import Wall
 from Racket import Racket
 from Ball import Ball
+import pygame.font
 
+columns = 12
+rows = 8
+pygame.font.init()
+pygame.init()
+clock = pygame.time.Clock()
 black_background = (0, 0, 0)
+red_message = (255, 0, 0)
+green_message = (0, 255, 0)
+white_score = (255, 255, 255)
 screen_width = 800
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Breakout")
+lives = 3
+score = 0
 
-brick_wall = Wall(screen, screen_width, 12, 8) #Instancia classe Wall
+brick_wall = Wall(screen, screen_width, columns, rows) #Instancia classe Wall
+racket = Racket(screen_width, screen_height, columns) #instancia da classe Racket
+initial_ball_position = ( #posicao inicial da bola
+    racket.rect.x + ((racket.width // 2) - 7.5),
+    racket.rect.y - ((racket.height * 2) - 21),
+     )
+ball = Ball(*initial_ball_position)
 
-racket = Racket(screen_width, screen_height, 12) #instancia da classe Racket
+# Load fonts outside the loop
+font_size = 36
+game_font = pygame.font.Font("assets/font/letter.ttf", font_size)
+score_font = pygame.font.Font("assets/font/letter.ttf", 50)
 
-ball = Ball(racket.rect.x + ((racket.width // 2)-7.5), racket.rect.y - ((racket.height * 2)-21)) #Determina  aposição inicial da bola#
+new_wall_needed = False
+ball_on_racket = True
 
 flag = True
-while flag:
+while flag and lives > 0:
     screen.fill(black_background)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             flag = False
 
-    racket.update_movement(screen_width)     #Atualiza a posição da raquete
-    ball.update_movement(screen_width, screen_height, racket) #Atualiza a posição da bola
+    racket.update_movement(screen_width)
 
-    brick_wall.draw_wall(screen)  #Desenha a parede de tijolos
-    racket.draw(screen)#Desenha a raquete
+    if ball_on_racket:
+        ball.rect.x = racket.rect.x + (racket.width // 2) - 7.5
+        ball.rect.y = racket.rect.y - ((racket.height * 2) - 21)
+
+    #Atualização do movimento da bola e verificação de colisões
+    lost_life = ball.update_movement(screen_width, screen_height, racket, ball_on_racket)
+    if lost_life:
+        lives -= 1
+        if lives > 0:
+            ball_on_racket = True
+            ball.reset_position(
+                racket.rect.x + (racket.width // 2) - 7.5,
+                racket.rect.y - ((racket.height * 2) - 21),
+            )
+    else:
+        ball_on_racket = False
+
+    ball.check_racket_collision(racket)
+    ball.wall_collision(brick_wall.blocks_all_wall)
+
+    brick_wall.draw_wall(screen) #Desenha a parede de tijolos
+    racket.draw(screen) #Desenha a raquete
     ball.draw(screen) #Desenha a bola
+
+    score_text = score_font.render(f" {ball.score}", True, white_score)
+    screen.blit(score_text, (10, 10))
+    score_text = score_font.render(f" {ball.score}", True, white_score)
+    screen.blit(score_text, (650, 10))
+
+    if all(all(brick[1] == 0 for brick in row) for row in brick_wall.blocks_all_wall): #Verifica se todos os tijolos foram destruídos
+        if new_wall_needed:
+            flag = False
+        else:
+            new_wall_needed = True
+            brick_wall = Wall(screen, screen_width, columns, rows)
 
     pygame.display.update()
 
+if lives == 0:
+    message = "Game Over"
+elif not flag:
+    message = "You Won!"
+
+screen.fill(black_background)
+font = pygame.font.Font(None, 72)
+text = font.render(message, True, red_message if lives == 0 else green_message)
+screen.blit(text, (screen_width // 2 - 150, screen_height // 2 - 36))
+
+#mosra a pontuacao final
+score_text = game_font.render(f"Score: {ball.score}", True, white_score)
+screen.blit(score_text, (screen_width // 2 - 150, screen_height // 2 + 36))
+
+pygame.display.update()
+
+pygame.time.delay(2000)
 pygame.quit()
 sys.exit()

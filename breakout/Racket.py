@@ -3,12 +3,13 @@ from pygame.locals import Rect
 class Racket:
     def __init__(self, screen_width, screen_height, column):
         self.height = 20
-        self.width = int(screen_width / column)
-        self.x = int((screen_width / 2) - (self.width / 2))
+        self.width = int(screen_width / column * 3)
+        self.x = int((screen_width / 2) - (self.width / 2) + 10)
         self.y = screen_height - (self.height * 2)
-        self.speed = 5
+        self.speed = 2
         self.rect = Rect(self.x, self.y, self.width, self.height)
         self.direction = 0
+
 
     def update_movement(self, screen_width):
         keys = pygame.key.get_pressed()

@@ -21,26 +21,26 @@ class Wall:
                 rect = pygame.Rect(brick_x, brick_y, self.width, self.height) #coordenada(x,y, largura,altura)
 
                 if row < 2:
-                    strength = 4
+                    points = 7
                 elif 2 <= row < 4:
-                    strength = 3
+                    points = 5
                 elif 4 <= row < 6:
-                    strength = 2
-                else:
-                    strength = 1
+                    points = 3
+                elif row >= 6:
+                    points = 1
 
-                # Adiciona o retângulo e a força à linha de blocos
-                block_row.append((rect, strength))
+                # Adiciona o retângulo e a pontuacao à linha de blocos
+                block_row.append((rect, points))
             self.blocks_all_wall.append(block_row)
 
     def draw_wall(self, screen):
         for row in self.blocks_all_wall:
             for brick in row:
-                if brick[1] == 4:
+                if brick[1] == 7:
                     brick_color = red_brick
-                elif brick[1] == 3:
+                elif brick[1] == 5:
                     brick_color = orange_brick
-                elif brick[1] == 2:
+                elif brick[1] == 3:
                     brick_color = green_brick
                 else:
                     brick_color = yelow_brick
