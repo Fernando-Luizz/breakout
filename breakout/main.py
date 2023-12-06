@@ -76,11 +76,10 @@ while flag and lives > 0:
     racket.draw(screen) #Desenha a raquete
     ball.draw(screen) #Desenha a bola
 
+    lives_text = score_font.render(f" {lives}", True, white_score)
+    screen.blit(lives_text, (80, 40))
     score_text = score_font.render(f" {ball.score}", True, white_score)
-    screen.blit(score_text, (10, 10))
-    score_text = score_font.render(f" {ball.score}", True, white_score)
-    screen.blit(score_text, (650, 10))
-
+    screen.blit(score_text, (650, 40))
     if all(all(brick[1] == 0 for brick in row) for row in brick_wall.blocks_all_wall): #Verifica se todos os tijolos foram destruídos
         if new_wall_needed:
             flag = False
