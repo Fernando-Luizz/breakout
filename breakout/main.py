@@ -21,6 +21,7 @@ pygame.display.set_caption("Breakout")
 lives = 3
 score = 0
 game_over = False
+reduction_count = 0
 
 brick_wall = Brick(screen, screen_width - 19, columns, rows)
 racket = Racket(screen_width, screen_height, columns)
@@ -121,8 +122,10 @@ while flag and lives > 0:
         racket.original_width = racket.width
         reduction_done = True
 
-    if ball.rect.y >= red_bricks_height:
+
+    if ball.rect.y >= red_bricks_height and reduction_count == 0:
         reduction_done = False
+        reduction_count = reduction_count + 1
 
     if lost_life:
         lives -= 1
@@ -180,6 +183,7 @@ while flag and lives > 0:
         else:
             new_wall_needed = True
             brick_wall = Brick(screen, screen_width, columns, rows)
+            reduction_count = 0
 
             initial_ball_position = (
                 racket.rect.x + ((racket.width // 2) - 7.5),
