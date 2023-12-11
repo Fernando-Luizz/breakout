@@ -12,7 +12,7 @@ class Ball:
         self.racket = racket
         self.lost = False
         self.score = 0
-        self.current_speed_level = 0.6  # Nível inicial de velocidade
+        self.current_speed_level = 1  # Nível inicial de velocidade
         self.hits_on_racket = 0
 
 
@@ -45,15 +45,15 @@ class Ball:
 
 
                 if self.hits_on_racket == 4:
-                    # Ajuste da velocidade quando a bola tocar 4 vezes na raquete
-                    self.x_speed = 1.2 if self.x_speed > 0 else -1.2
-                    self.y_speed = -1.2
+                    # Ajusta a velocidade quando a bola tocar 4 vezes na raquete
+                    self.x_speed = 1.0 if self.x_speed > 0 else -1.0
+                    self.y_speed = -1.0
 
                 if self.hits_on_racket == 12:
-                    # Ajuste da velocidade quando a bola tocar 4 vezes na raquete
-                    self.x_speed = 1.5 if self.x_speed > 0 else -1.5
-                    self.y_speed = -1.5
-                    self.hits_on_racket = 0  # Resetar o contador de toques na raquete
+                    # Ajusta a velocidade quando a bola tocar 4 vezes na raquete
+                    self.x_speed = 1.3 if self.x_speed > 0 else -1.3
+                    self.y_speed = -1.3
+                    self.hits_on_racket = 0  #Reseta o contador de toques na raquete
 
             if self.x_speed > self.max_speed:
                 self.x_speed = self.max_speed
@@ -62,13 +62,6 @@ class Ball:
 
     def wall_collision(self, all_bricks, racket):
         colision_treesh = 5
-
-        # Verifica se a bola atravessou a última camada de tijolos
-        if all(all(brick[1] == 0 for brick in row) for row in all_bricks):
-            if all(all(brick[1] == 0 for brick in all_bricks[row]) for row in range(len(all_bricks))):
-                racket.width /= 2  # Diminui pela metade a largura da raquete
-                racket.rect.width = racket.width  # Atualiza a largura da raquete
-                racket.original_width = racket.width  # Atualiza a largura original da raquete
 
         for row_cont, row in enumerate(all_bricks):
             for brike_cont, (brike_rect, points) in enumerate(row):
@@ -105,7 +98,7 @@ class Ball:
             return False  # Retorna False se a bola ainda está na raquete
 
         if self.lost:
-            return True  # Retorna True se a bola foi perdida
+            return True  #Retorna True se a bola foi perdida
 
         self.rect.x += self.x_speed
         self.rect.y += self.y_speed
@@ -113,7 +106,7 @@ class Ball:
         self.screen_boundaries(screen_width, screen_height)
         self.check_racket_collision(racket)
 
-        return False  # Retorna False se a bola não foi perdida
+        return False  #Retorna False se a bola não foi perdida
 
 
     def screen_boundaries(self, screen_width, screen_height):
@@ -140,9 +133,9 @@ class Ball:
     def reset_ball_speed(self):
         self.x_speed = 0.6
         self.y_speed = -0.6
-        self.current_speed_level = 0.6# Resetar o nível de velocidade ao reiniciar a bola
+        self.current_speed_level = 1 #Resetar o nível de velocidade ao reiniciar a bola
 
     def adjust_speed(self, brick_points):
         if brick_points == 5 or brick_points == 7:  # Laranja ou vermelho
-            self.x_speed = 1.8 if self.x_speed > 0 else -1.8
-            self.y_speed = -18
+            self.x_speed = 1.5 if self.x_speed > 0 else -1.5
+            self.y_speed = -1.5

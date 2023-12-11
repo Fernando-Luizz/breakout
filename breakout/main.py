@@ -13,7 +13,6 @@ pygame.init()
 clock = pygame.time.Clock()
 black_background = (0, 0, 0)
 red_message = (255, 0, 0)
-green_message = (0, 255, 0)
 white_score = (255, 255, 255)
 screen_width = 800
 screen_height = 600
@@ -21,9 +20,10 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Breakout")
 lives = 3
 score = 0
+game_over = False
 
-brick_wall = Brick(screen, screen_width-19, columns, rows)  # Instância classe Brick
-racket = Racket(screen_width, screen_height, columns)  # Instância da classe Racket
+brick_wall = Brick(screen, screen_width - 19, columns, rows)
+racket = Racket(screen_width, screen_height, columns)
 initial_ball_position = (
     racket.rect.x + ((racket.width // 2) - 7.5),
     racket.rect.y - ((racket.height * 2) - 21),
@@ -39,7 +39,6 @@ ball = Ball(
 
 edge = Edge()
 
-# Load fonts outside the loop
 font_size = 36
 game_font = pygame.font.Font("assets/font/game_font.ttf", font_size)
 score_font = pygame.font.Font("assets/font/score_font.ttf", 36)
@@ -47,15 +46,66 @@ score_font = pygame.font.Font("assets/font/score_font.ttf", 36)
 new_wall_needed = False
 ball_on_racket = True
 
+red_bricks_height = brick_wall.blocks_all_wall[0][0][0].top
+reduction_done = False
+
+def expand_racket_to_edges(racket, screen_width):
+    if racket.rect.left > 0:
+        expansion_left = racket.rect.left
+        racket.rect.x = 0
+        racket.rect.width += expansion_left
+
+    if racket.rect.right < screen_width:
+        expansion_right = screen_width - racket.rect.right
+        racket.rect.width += expansion_right
+
+def draw_final_screen(screen, brick_wall, racket, ball_on_racket):
+    screen.fill(black_background)
+    brick_wall.draw_wall(screen)
+    racket.draw(screen)
+    if ball_on_racket:
+        ball.rect.x = racket.rect.x + (racket.width // 2) - 7.5
+        ball.rect.y = racket.rect.y - ((racket.height * 2) - 21)
+    ball.draw(screen)
+    pygame.display.update()
+
+def draw_game_over_screen(screen, brick_wall, racket):
+    screen.fill(black_background)
+    brick_wall.draw_wall(screen)
+    racket.draw(screen)
+    pygame.display.update()
+
+def reset_game():
+    global lives, score, ball_on_racket, brick_wall, racket, ball, new_wall_needed, game_over, reduction_done
+    lives = 3
+    score = 0
+    ball_on_racket = True
+    new_wall_needed = False
+    game_over = False
+    reduction_done = False
+    brick_wall = Brick(screen, screen_width - 19, columns, rows)
+    racket = Racket(screen_width, screen_height, columns)
+    initial_ball_position = (
+        racket.rect.x + ((racket.width // 2) - 7.5),
+        racket.rect.y - ((racket.height * 2) - 21),
+    )
+    ball = Ball(
+        initial_ball_position[0],
+        initial_ball_position[1],
+        10,
+        initial_speed=0.6,
+        racket=racket
+    )
+
 flag = True
 while flag and lives > 0:
     screen.fill(black_background)
 
-    edge.edge()
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             flag = False
+
+    edge.edge()
 
     racket.update_movement(screen_width)
 
@@ -63,15 +113,24 @@ while flag and lives > 0:
         ball.rect.x = racket.rect.x + (racket.width // 2) - 7.5
         ball.rect.y = racket.rect.y - ((racket.height * 2) - 21)
 
-    # Atualização do movimento da bola e verificação de colisões
     lost_life = ball.update_movement(screen_width, screen_height, racket, ball_on_racket)
+
+    if ball.rect.y < red_bricks_height and not reduction_done:
+        racket.width /= 2
+        racket.rect.width = int(racket.width)
+        racket.original_width = racket.width
+        reduction_done = True
+
+    if ball.rect.y >= red_bricks_height:
+        reduction_done = False
+
     if lost_life:
         lives -= 1
         if lives > 0:
             ball_on_racket = True
             ball.reset_position(
                 racket.rect.x + (racket.width // 2) - 7.5,
-                racket.rect.y - ((racket.height * 2) - 21),
+                racket.rect.y - ((racket.height * 2) - 21)
             )
             racket.hits = 0
             ball.reset_ball_speed()
@@ -101,7 +160,6 @@ while flag and lives > 0:
     score_text = score_font.render(f" {ball.score}", True, white_score)
     screen.blit(score_text, (650, 40))
 
-    # Verifica se a raquete ultrapassou a primeira linha de tijolos vermelhos
     if brick_wall.blocks_all_wall and brick_wall.blocks_all_wall[0]:
         first_row_bricks = brick_wall.blocks_all_wall[0]
 
@@ -112,9 +170,8 @@ while flag and lives > 0:
                         and racket.rect.bottom > brick_rect.top
                         and racket.width > racket.original_width / 2
                 ):
-                    # Reduz a largura da raquete pela metade
                     racket.width /= 2
-                    racket.rect.width = int(racket.width)  # Garante que a largura seja um número inteiro
+                    racket.rect.width = int(racket.width)
                     racket.original_width = racket.width
 
     if all(all(brick[1] == 0 for brick in row) for row in brick_wall.blocks_all_wall):
@@ -132,21 +189,27 @@ while flag and lives > 0:
 
     pygame.display.update()
 
-if lives == 0:
-    message = "GAME OVER"
-elif not flag:
-    message = "YOU WON!"
+    if lives == 0:
+        expand_racket_to_edges(racket, screen_width)
+        draw_final_screen(screen, brick_wall, racket, ball_on_racket)
+        lives_text = score_font.render(f" {lives}", True, white_score)
+        screen.blit(lives_text, (80, 40))
+        score_text = score_font.render(f" {ball.score}", True, white_score)
+        screen.blit(score_text, (650, 40))
+        lives_text = game_font.render("PRESS SPACE TO RESTART", True, red_message)
+        screen.blit(lives_text, (screen_width // 2 - 260, screen_height // 2))
+        pygame.display.update()
 
-screen.fill(black_background)
-font = pygame.font.Font("assets/font/game_font.ttf", 72)
-text = font.render(message, True, red_message if lives == 0 else green_message)
-screen.blit(text, (screen_width // 2 - 150, screen_height // 2 - 36))
+        restart_game = False
+        while not restart_game:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    restart_game = True
+                    reset_game()
+                    game_over = False
 
-score_text = game_font.render(f"Score: {ball.score}", True, white_score)
-screen.blit(score_text, (screen_width // 2 - 150, screen_height // 2 + 36))
-
-pygame.display.update()
-
-pygame.time.delay(2000)
 pygame.quit()
 sys.exit()
