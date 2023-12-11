@@ -7,20 +7,19 @@ green_brick = (0, 127, 33)
 yellow_brick = (197, 199, 37)
 
 
-
 class Brick:
     def __init__(self, screen, screen_width, column, rows):
         self.width = screen_width / column
         self.height = 20
-        self.blocks_all_wall = []  #Armazena todos os blocos da parede
+        self.blocks_all_wall = []  # Armazena todos os blocos da parede
 
         initial_y = 100
         for row in range(rows):
             block_row = []
             for col in range(column):
-                brick_x = col * self.width+10
+                brick_x = col * self.width + 10
                 brick_y = row * self.height + initial_y
-                rect = pygame.Rect(brick_x, brick_y, self.width, self.height) #coordenada(x,y, largura,altura)
+                rect = pygame.Rect(brick_x, brick_y, self.width, self.height)  # coordenada(x,y, largura,altura)
 
                 if row < 2:
                     points = 7
@@ -48,4 +47,12 @@ class Brick:
                     brick_color = yellow_brick
 
                 pygame.draw.rect(screen, brick_color, brick[0])
-                pygame.draw.rect(screen, edge_color, brick[0], 3) #Tamanho da borda entre os tijolos
+                pygame.draw.rect(screen, edge_color, brick[0], 3)  # Tamanho da borda entre os tijolos
+
+    def increase_ball_speed(self, ball):
+        # Verifica se a bola atingiu tijolos verdes ou laranjas e aumenta a velocidade
+        for row_cont, row in enumerate(self.blocks_all_wall):
+            for brike_cont, (brike_rect, points) in enumerate(row):
+                if points == 3 or points == 5:  # Verifica tijolos verdes ou laranjas
+                    if ball.rect.colliderect(brike_rect):
+                        ball.adjust_speed(points)  # Chama o método para ajustar a velocidade
