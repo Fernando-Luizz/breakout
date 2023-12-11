@@ -95,7 +95,7 @@ class Ball:
 
     def update_movement(self, screen_width, screen_height, racket, on_racket):
         if on_racket:
-            return False  # Retorna False se a bola ainda está na raquete
+            return False  #Retorna False se a bola ainda está na raquete
 
         if self.lost:
             return True  #Retorna True se a bola foi perdida
@@ -133,7 +133,7 @@ class Ball:
     def reset_ball_speed(self):
         self.x_speed = 0.6
         self.y_speed = -0.6
-        self.current_speed_level = 1 #Resetar o nível de velocidade ao reiniciar a bola
+        self.current_speed_level = 1 #Reseta o nível de velocidade ao reiniciar a bola
 
     def adjust_speed(self, brick_points):
         if brick_points == 5 or brick_points == 7:  # Laranja ou vermelho

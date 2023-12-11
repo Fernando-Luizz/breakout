@@ -5,7 +5,7 @@ class Racket:
     def __init__(self, screen_width, screen_height, column):
         self.height = 20
         self.width = int(screen_width / column * 2)
-        self.original_width = self.width  # Adicione esta linha
+        self.original_width = self.width
         self.x = int((screen_width / 2) - (self.width / 2) + 10)
         self.y = screen_height - (self.height * 2)
         self.speed = 2
