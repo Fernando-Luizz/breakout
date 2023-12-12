@@ -13,12 +13,12 @@ pygame.init()
 clock = pygame.time.Clock()
 black_background = (0, 0, 0)
 red_message = (255, 0, 0)
-white_score = (255, 255, 255)
+score_color = (212, 210, 212)
 screen_width = 800
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Breakout")
-lives = 3
+lives = 1
 score = 0
 game_over = False
 reduction_count = 0
@@ -33,7 +33,7 @@ initial_ball_position = (
 ball = Ball(
     initial_ball_position[0],
     initial_ball_position[1],
-    10,
+    7,
     initial_speed=0.6,
     racket=racket
 )
@@ -78,7 +78,7 @@ def draw_game_over_screen(screen, brick_wall, racket):
 
 def reset_game():
     global lives, score, ball_on_racket, brick_wall, racket, ball, new_wall_needed, game_over, reduction_done
-    lives = 3
+    lives = 1
     score = 0
     ball_on_racket = True
     new_wall_needed = False
@@ -93,7 +93,7 @@ def reset_game():
     ball = Ball(
         initial_ball_position[0],
         initial_ball_position[1],
-        10,
+        7,
         initial_speed=0.6,
         racket=racket
     )
@@ -128,8 +128,8 @@ while flag and lives > 0:
         reduction_count = reduction_count + 1
 
     if lost_life:
-        lives -= 1
-        if lives > 0:
+        lives += 1
+        if lives < 4 and lives >= 1:
             ball_on_racket = True
             ball.reset_position(
                 racket.rect.x + (racket.width // 2) - 7.5,
@@ -158,10 +158,10 @@ while flag and lives > 0:
     racket.draw(screen)
     ball.draw(screen)
 
-    lives_text = score_font.render(f" {lives}", True, white_score)
-    screen.blit(lives_text, (80, 40))
-    score_text = score_font.render(f" {ball.score}", True, white_score)
-    screen.blit(score_text, (650, 40))
+    lives_text = score_font.render(f" {lives}", True, score_color)
+    screen.blit(lives_text, (650, 40))
+    score_text = score_font.render(f" {ball.score}", True, score_color)
+    screen.blit(score_text, (80, 40))
 
     if brick_wall.blocks_all_wall and brick_wall.blocks_all_wall[0]:
         first_row_bricks = brick_wall.blocks_all_wall[0]
@@ -193,13 +193,14 @@ while flag and lives > 0:
 
     pygame.display.update()
 
-    if lives == 0:
+    if lives == 4:
         expand_racket_to_edges(racket, screen_width)
         draw_final_screen(screen, brick_wall, racket, ball_on_racket)
-        lives_text = score_font.render(f" {lives}", True, white_score)
-        screen.blit(lives_text, (80, 40))
-        score_text = score_font.render(f" {ball.score}", True, white_score)
-        screen.blit(score_text, (650, 40))
+        lives_text = score_font.render(f" {lives}", True, score_color)
+        screen.blit(lives_text, (650, 40))
+        score_text = score_font.render(f" {ball.score}", True, score_color)
+        screen.blit(score_text, (80, 40))
+        edge.edge()
         lives_text = game_font.render("PRESS SPACE TO RESTART", True, red_message)
         screen.blit(lives_text, (screen_width // 2 - 260, screen_height // 2))
         pygame.display.update()

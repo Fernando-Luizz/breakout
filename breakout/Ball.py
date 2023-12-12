@@ -28,10 +28,10 @@ class Ball:
         self.wall_sound.set_volume(0.4)
 
     def draw(self, screen):
-        white_ball = (255, 255, 255)
+        ball_color = (212, 210, 212)
         edge_ball = (0, 0, 0)
-        pygame.draw.circle(screen, white_ball, (self.rect.x + self.radius, self.rect.y + self.radius), self.radius)
-        pygame.draw.circle(screen, edge_ball, (self.rect.x + self.radius, self.rect.y + self.radius), self.radius, 2)
+        pygame.draw.rect(screen, ball_color, self.rect)
+        pygame.draw.rect(screen, edge_ball, self.rect, 2)
 
     def check_racket_collision(self, racket):
         colision_treesh = 5
